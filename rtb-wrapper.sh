@@ -15,9 +15,35 @@ fn_display_usage () {
 	echo "https://github.com/thomas-mc-work/rtb-wrapper/blob/master/README.md"
 }
 
+fn_parse_ssh_flags() {
+    cmd=""
+    if [ -n "${SSH_PORT:-}" ]; then
+        cmd="-p ${SSH_PORT}"
+    fi
+
+    if [ -n "${ID_RSA_KEY:-}" ]; then
+        cmd="${cmd} -i ${ID_RSA_KEY}"
+    fi
+
+    echo ${cmd}
+}
+
+fn_parse_backup_flags() {
+    cmd=""
+
+    if [ -n "${SET_FLAGS:-}" ]; then
+        cmd="${cmd} --rsync-set-flags \"${SET_FLAGS}\""
+    elif [ -n "${APPEND_FLAGS:-}" ]; then
+        cmd="${cmd} --rsync-append-flags \"${APPEND_FLAGS}\""
+    fi
+
+    echo ${cmd}
+}
+
 # create backup cli command
 fn_create_backup_cmd () {
-    cmd="rsync_tmbackup.sh '${SOURCE}' '${TARGET}'"
+
+    cmd="rsync_tmbackup.sh $(fn_parse_ssh_flags) $(fn_parse_backup_flags) '${SOURCE}' '${TARGET}'"
 
     exclude_file_check=${EXCLUDE_FILE:-}
 
@@ -30,7 +56,7 @@ fn_create_backup_cmd () {
 
 # create restore cli command
 fn_create_restore_cmd () {
-    cmd="rsync -aP"
+    cmd="rsync -aP $(fn_parse_ssh_flags)"
 
     if [ "${WIPE_SOURCE_ON_RESTORE:-'false'}" = "true" ]; then
         cmd="${cmd} --delete"
@@ -82,9 +108,11 @@ if [ -r "$profile_file" ]; then
     else
         cmd=$(fn_create_backup_cmd)
     fi
-
-    #echo "# ${cmd}"
-    eval "$cmd"
+    if [ "${RTB_DEBUG:-'false'}" = "true" ]; then
+        echo "# ${cmd}"
+    else
+        eval "$cmd"
+    fi
 else
     echo "Failed to read the profile file: ${profile_file}" > /dev/stderr
     exit 1
