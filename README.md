@@ -54,6 +54,8 @@ And here is how to __restore__ from the `latest` backup:
     APPEND_FLAGS="--rsync-path /bin/rsync"
     # optional: Set the rsync flags that are going to be used for backup.
     SET_FLAGS="-vv"
+    # optional: Set the expiration strategy.
+    STRATEGY="1:1 30:7 365:30"
     # optional: Specify the private ssh key to use.
     ID_RSA_KEY="~/.ssh/id_syno"
     # optional: SSH port
