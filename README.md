@@ -50,6 +50,15 @@ And here is how to __restore__ from the `latest` backup:
     EXCLUDE_FILE="${HOME}/backup-documents-excludes.lst"
     # optional: wipe the source folder before restoring files? (true/false; default: false)
     WIPE_SOURCE_ON_RESTORE=true
+    # optional: Append the rsync flags that are going to be used for backup.
+    APPEND_FLAGS="--rsync-path /bin/rsync"
+    # optional: Set the rsync flags that are going to be used for backup.
+    SET_FLAGS="-vv"
+    # optional: Specify the private ssh key to use.
+    ID_RSA_KEY="~/.ssh/id_syno"
+    # optional: SSH port
+    SSH_PORT="2227"
+    
 
 ### Exclude file
 
