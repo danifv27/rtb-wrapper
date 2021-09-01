@@ -36,7 +36,9 @@ fn_parse_backup_flags() {
     elif [ -n "${APPEND_FLAGS:-}" ]; then
         cmd="${cmd} --rsync-append-flags \"${APPEND_FLAGS}\""
     fi
-
+    if [ ! -z "${STRATEGY:-}" ]; then
+        cmd="${cmd} --strategy ${STRATEGY}"
+    fi
     echo ${cmd}
 }
 
